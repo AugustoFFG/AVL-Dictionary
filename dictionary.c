@@ -5,23 +5,35 @@
 typedef struct no{
     char dado[50];
     char signigicado[300];
-    int altura;
+    int fatorB;
     struct no* pai;
     struct no* esq;
     struct no* dir;
 }No;
 
+typedef struct arvore {
+    No *raiz;
+    int numNos;
+} Arvore;
+
 No* CriaNo(char* palavra, char* significado){
     No* no = (No*)malloc(sizeof(No));
     strcpy(no->dado, palavra);
     strcpy(no->signigicado, significado);
-    no->altura = 1;
+    no->fatorB = 0;
     no->dir = NULL;
     no->esq = NULL;
     no->pai = NULL;
     return no;
 }
-
+ //enunciado pede criar árvore vazia
+Arvore *criaArvore(){
+    Arvore *novaArvore = (Arvore*)malloc(sizeof(Arvore));
+    novaArvore->raiz = NULL;
+    novaArvore->numNos=0;
+    return novaArvore;
+}
+/*
 int calcularAltura(No* n){
     if(n == NULL){
         return 0;
@@ -33,8 +45,9 @@ int fb(No* n){
     if (n == NULL) return 0; 
     int alturaEsq = calcularAltura(n->esq);
     int alturaDir = calcularAltura(n->dir);
-    return alturaEsq - alturaDir; 
+    return n->esq->fatorB - n->esq->alturaDir; 
 }
+*/
 
 void LL(No* no) {
     No *aux;
@@ -69,7 +82,19 @@ void LR(No *no){
     RR(no);
 }
 
-//No* balancear(No* raiz)
+void balancear(No* no) {
+    if(no->fatorB==2){
+        if(no->esq->fatorB==-1){
+            LL(no->esq);
+            RR(no);
+        }
+    } else if(no->fatorB == -2){
+        if(no->dir->fatorB==1){
+            RR(no->dir);
+            LL(no);
+        }
+    }
+}
 
 No* inserir(No* raiz, char* palavra, char* significado) {
     if (raiz == NULL) return criarNo(palavra, significado);
@@ -79,19 +104,22 @@ No* inserir(No* raiz, char* palavra, char* significado) {
     if (valor < 0){
         raiz->esq = inserir(raiz->esq, palavra, significado);
         raiz->esq->pai = raiz;
+        raiz->esq->fatorB -= 1;
+        balancear(raiz->esq);
     }
     else if (valor > 0){
         raiz->dir = inserir(raiz->dir, palavra, significado);
         raiz->dir->pai = raiz;
+        raiz->dir->fatorB += 1;
+        balancear(raiz->dir);
     }
-    else{
+    else {
         printf("Palavra já existe no dicionário\n");
-        return raiz;
+        return NULL;
     }
-    raiz->altura = 1 + obterMaior(calcularAltura(raiz->esq), calcularAltura(raiz->dir));
-    return balancear(raiz);
 }
 
+//falta fazer
 No* remover(No* raiz, char* palavra) {
     if (raiz == NULL) {
         printf("Palavra não encontrada.\n");
@@ -106,32 +134,45 @@ No* remover(No* raiz, char* palavra) {
     else if(valor > 0){
         raiz->dir = remover(raiz->dir, palavra);
     }
+
+    //encontrou
     else{ 
-        if(raiz->esq == NULL && raiz->dir == NULL) {
+        if(raiz->esq == NULL && raiz->dir == NULL) { //folha
             free(raiz);
             return NULL;
         } 
-        else if(raiz->esq == NULL){
+
+        else if(raiz->esq == NULL){ //só tem 1 filho
             No* temp = raiz->dir;
             temp->pai = raiz->pai;
             free(raiz);
             return temp;
         } 
-        else if(raiz->dir == NULL){
+        else if(raiz->dir == NULL){ //só tem 1 filho
             No* temp = raiz->esq;
             temp->pai = raiz->pai;
             free(raiz);
             return temp;
         } 
-        else{
+        else{ //tem ambos os filhos
             No* antecessor = encontrarMaximo(raiz->esq);
             strcpy(raiz->dado, antecessor->dado);
             strcpy(raiz->signigicado, antecessor->signigicado);
             raiz->esq = remover(raiz->esq, antecessor->dado);
         }
+        //for de todo no z na subarvore de r
+        //atualizaFb(z);
+        //balancear(z)
     }
     
   //return balancear(raiz);
+}
+
+No* busca(No *raiz, char palavra[]){
+    int cmp = strcmp(raiz->dado, palavra);
+    if(raiz == NULL || cmp==0) return raiz;
+    if(cmp>0) busca(raiz->dir, palavra);
+    else busca(raiz->esq, palavra);
 }
 
 void percursoEmOrdem(No* no){
