@@ -45,7 +45,7 @@ int fb(No* n){
     if (n == NULL) return 0; 
     int alturaEsq = calcularAltura(n->esq);
     int alturaDir = calcularAltura(n->dir);
-    return n->esq->fatorB - n->esq->alturaDir; 
+    return n->esq->altura - n->esq->alturaDir; 
 }
 */
 
@@ -94,6 +94,27 @@ void balancear(No* no) {
             LL(no);
         }
     }
+}
+
+void atualizarFB(No *no){
+    int valEsq=0, valDir=0;
+    if (no->esq!=NULL) valEsq = no->esq->fatorB +1;
+    if (no->dir!=NULL) valDir = no->dir->fatorB -1; 
+    no->fatorB = valEsq + valDir;
+}
+
+void fbTudo(No *raiz){
+    if(raiz==NULL) return;
+    fbTudo(raiz->esq);
+    fbTudo(raiz->dir);
+    atualizarFB(raiz);
+}
+
+void balancearTudo(No *raiz){
+    if(raiz==NULL) return;
+    balancearTudo(raiz->esq);
+    balancearTudo(raiz->dir);
+    balancear(raiz);
 }
 
 No* inserir(No* raiz, char* palavra, char* significado) {
@@ -160,9 +181,10 @@ No* remover(No* raiz, char* palavra) {
             strcpy(raiz->signigicado, antecessor->signigicado);
             raiz->esq = remover(raiz->esq, antecessor->dado);
         }
-        //for de todo no z na subarvore de r
-        //atualizaFb(z);
-        //balancear(z)
+        //vai para um nó folha 
+
+        fbTudo(raiz);
+        balancearTudo(raiz);
     }
     
   //return balancear(raiz);
