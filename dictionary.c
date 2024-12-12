@@ -36,13 +36,38 @@ int fb(No* n){
     return alturaEsq - alturaDir; 
 }
 
-//No* RR(No* no)
+void LL(No* no) {
+    No *aux;
+    aux = no->dir;
+    if(aux->esq!=NULL) aux->esq->pai = no;
+    no->dir = aux->esq;
+    aux->esq = no;
+    aux->pai = no->pai;
+    no->pai = aux;
+    no = aux; //if(no->pai==NULL) arv->raiz = aux;
+}
 
-//No* RL(No* no)
 
-//No* LL(No* no)
+void RR(No* no) {
+    No *aux;
+    aux = no->esq;
+    if(aux->dir!=NULL) aux->dir->pai = no;
+    no->esq = aux->dir;
+    aux->dir = no;
+    aux->pai = no->pai;
+    no->pai = aux;
+    no = aux; //if(no->pai==NULL) arv->raiz = aux;
+}
 
-//No* LR(No* no)
+void RL(No *no){
+    RR(no->dir);
+    LL(no);
+}
+
+void LR(No *no){
+    LL(no->esq);
+    RR(no);
+}
 
 //No* balancear(No* raiz)
 
@@ -109,6 +134,12 @@ No* remover(No* raiz, char* palavra) {
   //return balancear(raiz);
 }
 
+void percursoEmOrdem(No* no){
+    if(no == NULL) return;
+    percursoEmOrdem(no->esq);
+    printf("%s ",no->dado); //por enquanto imprime só a palavra
+    percursoEmOrdem(no->dir);
+}
 
 int main(){
     return 0;
