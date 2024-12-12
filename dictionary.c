@@ -82,7 +82,7 @@ void LR(No *no){
     RR(no);
 }
 
-void* balancear(No* no){
+void balancear(No* no){
     if(no->fatorB > 1){
         if(no->esq->fatorB==-1){
             LL(no->esq);
