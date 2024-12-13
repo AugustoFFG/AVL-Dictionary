@@ -82,18 +82,19 @@ void LR(No *no){
     RR(no);
 }
 
-void balancear(No* no){
+No *balancear(No* no){
     if(no->fatorB > 1){
         if(no->esq->fatorB==-1){
             LL(no->esq);
-            RR(no);
         }
+        RR(no);
     } else if(no->fatorB == -2){
         if(no->dir->fatorB < 0){
             RR(no->dir);
-            LL(no);
         }
+        LL(no);
     }
+    return no;
 }
 
 void atualizarFB(No *no){
@@ -124,17 +125,15 @@ No* inserir(No* raiz, char* palavra, char* significado) {
 
     if (valor < 0){
         raiz->esq = inserir(raiz->esq, palavra, significado);
-        raiz->esq->pai = raiz;
     }
     else if (valor > 0){
         raiz->dir = inserir(raiz->dir, palavra, significado);
-        raiz->dir->pai = raiz;
     }
     else {
         printf("Palavra já existe no dicionário\n");
-        return NULL;
+        return raiz;
     }
-    atualizarFB(raiz);
+    fbTudo(raiz);
     return balancear(raiz);
 }
 
@@ -187,7 +186,7 @@ No* remover(No* raiz, char* palavra) {
             strcpy(raiz->significado, antecessor->significado);
             raiz->esq = remover(raiz->esq, antecessor->dado);
         }
-        //vai para um nó folha 
+        //atualiza fatores de balanceamento e balanceia a árvore
         fbTudo(raiz);
         balancearTudo(raiz);
     }
@@ -219,8 +218,7 @@ void percursoEmOrdem(No* no){
 }
 
 int main() {
-    Arvore* arvore = NULL;
-    No* raiz = NULL;
+    Arvore* arvore;
     char palavra[50], significado[256];
     int opcao;
     while(opcao != 6){
@@ -238,7 +236,6 @@ int main() {
         switch(opcao){
         case 1:
             arvore = criaArvore();
-            raiz = arvore->raiz;
             printf("Arvore criada com sucesso\n");
             break;
         case 2:
@@ -249,16 +246,17 @@ int main() {
             scanf("%s",palavra);
             printf("Insira o significado: ");
             scanf(" %[^\n]", significado);
-            inserir(raiz, palavra, significado);         
+            arvore->raiz = inserir(arvore->raiz, palavra, significado);         
             break;
         case 4:
             //precisa corrigir a busca
             printf("Insira uma palavra para buscar: ");
             scanf("%s",palavra);
-            busca(raiz, palavra);
+            busca(arvore->raiz, palavra);
             break;
         case 5:
             // imprimir arvore
+            percursoEmOrdem(arvore->raiz);
             break;
         case 6:
             printf("Encerrando!");
