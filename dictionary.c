@@ -49,7 +49,7 @@ int fb(No* n){
 }
 */
 
-void LL(No* no){
+No* LL(No* no){
     No *aux;
     aux = no->dir;
     if(aux->esq!=NULL) aux->esq->pai = no;
@@ -57,11 +57,11 @@ void LL(No* no){
     aux->esq = no;
     aux->pai = no->pai;
     no->pai = aux;
-    no = aux; //if(no->pai==NULL) arv->raiz = aux;
+    return aux;
 }
 
 
-void RR(No* no){
+No* RR(No* no){
     No *aux;
     aux = no->esq;
     if(aux->dir!=NULL) aux->dir->pai = no;
@@ -69,10 +69,10 @@ void RR(No* no){
     aux->dir = no;
     aux->pai = no->pai;
     no->pai = aux;
-    no = aux; //if(no->pai==NULL) arv->raiz = aux;
+    return aux;
 }
 
-void RL(No *no){
+/*void RL(No *no){
     RR(no->dir);
     LL(no);
 }
@@ -80,20 +80,27 @@ void RL(No *no){
 void LR(No *no){
     LL(no->esq);
     RR(no);
-}
+}*/
 
-No *balancear(No* no){
-    if(no->fatorB > 1){
-        if(no->esq->fatorB==-1){
-            LL(no->esq);
-        }
-        RR(no);
-    } else if(no->fatorB == -2){
-        if(no->dir->fatorB < 0){
-            RR(no->dir);
-        }
-        LL(no);
+No* balancear(No* no) {
+    if(no->fatorB>1 && no->esq->fatorB==-1){ //caso LR
+        printf("LR(%s)\n", no->dado);
+        no->esq = LL(no->esq);
+        no = RR(no);
+    } else if(no->fatorB>1) {
+        printf("RR(%s)\n", no->dado);
+        no = RR(no); //caso RR
     }
+
+    if(no->fatorB<-1 && no->esq->fatorB==1){ //caso RL
+        printf("RL(%s)\n", no->dado);
+        no->dir = RR(no->dir);
+        no = LL(no);
+    } else if(no->fatorB<-1) {
+        printf("LL(%s)\n", no->dado);
+        no = LL(no); //caso LL
+    }
+
     return no;
 }
 
@@ -125,9 +132,11 @@ No* inserir(No* raiz, char* palavra, char* significado) {
 
     if (valor < 0){
         raiz->esq = inserir(raiz->esq, palavra, significado);
+        if (raiz->esq != NULL) raiz->esq->pai = raiz;
     }
     else if (valor > 0){
         raiz->dir = inserir(raiz->dir, palavra, significado);
+        if (raiz->dir != NULL) raiz->dir->pai = raiz;
     }
     else {
         printf("Palavra já existe no dicionário\n");
@@ -189,8 +198,8 @@ No* remover(No* raiz, char* palavra) {
         //atualiza fatores de balanceamento e balanceia a árvore
         fbTudo(raiz);
         balancearTudo(raiz);
+        printf("Palavra excluida com sucesso!");
     }
-    
   //return balancear(raiz);
 }
 
@@ -200,14 +209,16 @@ No* busca(No *raiz, char palavra[]){
         return NULL;
     }
     int cmp = strcmp(raiz->dado, palavra);
-    if(cmp == 0){
-        printf("Palavra encontradada!\n%s: %s\n",raiz->dado,raiz->significado);
-        return raiz;
-    }
-    else if(cmp>0){
+    if(cmp<0){
         return busca(raiz->dir, palavra);
     }
-    else return busca(raiz->esq, palavra);
+    else if(cmp>0){
+    return busca(raiz->esq, palavra);
+    }
+    else {
+        printf("Palavra encontradada!\n%s: %s\n",raiz->dado,raiz->significado);
+        return raiz;
+    } 
 }
 
 void percursoEmOrdem(No* no){
@@ -235,13 +246,18 @@ int main() {
         scanf("%d", &opcao);
         switch(opcao){
         case 1:
+            //cria árvore vazia
             arvore = criaArvore();
             printf("Arvore criada com sucesso\n");
             break;
         case 2:
             // remover palavra
+            printf("Insira uma palavra para excluir: ");
+            scanf("%s",palavra);
+            remover(arvore->raiz, palavra);
             break;
         case 3:
+            //insere palavra
             printf("Insira uma palavra: ");
             scanf("%s",palavra);
             printf("Insira o significado: ");
@@ -249,7 +265,7 @@ int main() {
             arvore->raiz = inserir(arvore->raiz, palavra, significado);         
             break;
         case 4:
-            //precisa corrigir a busca
+            //busca
             printf("Insira uma palavra para buscar: ");
             scanf("%s",palavra);
             busca(arvore->raiz, palavra);
