@@ -27,6 +27,7 @@ No* criaNo(char* palavra, char* significado){
     no->pai = NULL;
     return no;
 }
+
  //enunciado pede criar árvore vazia
 Arvore *criaArvore(){
     Arvore *novaArvore = (Arvore*)malloc(sizeof(Arvore));
@@ -34,21 +35,6 @@ Arvore *criaArvore(){
     printf("Arvore criada com sucesso\n");
     return novaArvore;
 }
-/*
-int calcularAltura(No* n){
-    if(n == NULL){
-        return 0;
-    }
-    return n->altura;
-}
-
-int fb(No* n){
-    if (n == NULL) return 0; 
-    int alturaEsq = calcularAltura(n->esq);
-    int alturaDir = calcularAltura(n->dir);
-    return n->esq->altura - n->esq->alturaDir; 
-}
-*/
 
 No* LL(No* no){
     No *aux;
@@ -101,25 +87,18 @@ No* balancear(No* no) {
     return no;
 }
 
-void atualizarFB(No *no){
-    int valEsq=0, valDir=0;
-    if (no->esq!=NULL) valEsq = abs(no->esq->fatorB) +1;
-    if (no->dir!=NULL) valDir = abs(no->dir->fatorB) +1; 
-    no->fatorB = valEsq - valDir;
+int calcularAltura(No* no) {
+    if (no == NULL) return 0;
+    int alturaEsq = calcularAltura(no->esq);
+    int alturaDir = calcularAltura(no->dir);
+    return 1 + (alturaEsq > alturaDir ? alturaEsq : alturaDir);
 }
 
-void fbTudo(No *raiz){
-    if(raiz==NULL) return;
-    fbTudo(raiz->esq);
-    fbTudo(raiz->dir);
-    atualizarFB(raiz);
-}
-
-void balancearTudo(No *raiz){
-    if(raiz==NULL) return;
-    balancearTudo(raiz->esq);
-    balancearTudo(raiz->dir);
-    balancear(raiz);
+void atualizarFB(No *no) {
+    if (no == NULL) return;
+    int alturaEsq = calcularAltura(no->esq);
+    int alturaDir = calcularAltura(no->dir);
+    no->fatorB = alturaEsq - alturaDir;
 }
 
 No* inserir(No* raiz, char* palavra, char* significado) {
@@ -140,7 +119,7 @@ No* inserir(No* raiz, char* palavra, char* significado) {
         printf("\nOperacao de insercao sem sucesso. Palavra %s já existe no dicionário\n", palavra);
         return raiz;
     }
-    fbTudo(raiz);
+    atualizarFB(raiz);
     return balancear(raiz);
 }
 
@@ -152,53 +131,46 @@ No* encontrarAntecessor(No* raiz) {
     return atual;
 }
 
-//falta fazer
 No* remover(No* raiz, char* palavra) {
     if (raiz == NULL) {
-        printf("\nRemocao invalida\n");
-        return raiz;
+        printf("Remocao invalida\n");
+        return NULL;
     }
 
     int valor = strcmp(palavra, raiz->dado);
 
-    if(valor < 0){
+    if (valor < 0) {
         raiz->esq = remover(raiz->esq, palavra);
-    }
-    else if(valor > 0){
+    } else if (valor > 0) {
         raiz->dir = remover(raiz->dir, palavra);
-    }
-
-    //encontrou
-    else{ 
-        if(raiz->esq == NULL && raiz->dir == NULL) { //folha
+    } else { // Encontrou o nó a ser removido
+        if (raiz->esq == NULL && raiz->dir == NULL) { // Caso 1: Nó folha
             free(raiz);
+            printf("Remoção bem sucedida!\n");
             return NULL;
-        } 
-
-        else if(raiz->esq == NULL){ //só tem 1 filho
+        } else if (raiz->esq == NULL) { // Caso 2: Nó com apenas filho direito
             No* temp = raiz->dir;
-            temp->pai = raiz->pai;
+            temp->pai = raiz->pai; // Atualiza o ponteiro pai
             free(raiz);
+            printf("Remoção bem sucedida!\n");
             return temp;
-        } 
-        else if(raiz->dir == NULL){ //só tem 1 filho
+        } else if (raiz->dir == NULL) { // Caso 2: Nó com apenas filho esquerdo
             No* temp = raiz->esq;
-            temp->pai = raiz->pai;
+            temp->pai = raiz->pai; // Atualiza o ponteiro pai
             free(raiz);
+            printf("Remoção bem sucedida!\n");
             return temp;
-        } 
-        else{ //tem ambos os filhos
+        } else { // Caso 3: Nó com dois filhos
             No* antecessor = encontrarAntecessor(raiz->esq);
             strcpy(raiz->dado, antecessor->dado);
             strcpy(raiz->significado, antecessor->significado);
             raiz->esq = remover(raiz->esq, antecessor->dado);
         }
-        //atualiza fatores de balanceamento e balanceia a árvore
-        fbTudo(raiz);
-        balancearTudo(raiz);
-        printf("\nPalavra excluida com sucesso!");
     }
-  //return balancear(raiz);
+    atualizarFB(raiz);
+
+    // Rebalanceia o nó atual
+    return balancear(raiz);
 }
 
 No* busca(No *raiz, char palavra[], int altura){
@@ -279,7 +251,9 @@ int main() {
             break;
         case 5:
             // imprimir arvore
+            printf("\n");
             percursoEmOrdem(arvore->raiz, 0);
+            printf("\n");
             break;
         case 6:
             printf("\nEncerrando!");
@@ -318,6 +292,7 @@ int main() {
             // imprimir arvore
             printf("\n");
             percursoEmOrdem(arvore->raiz, 0);
+            printf("\n");
             break;
         case 6:
             printf("\nEncerrando!");
