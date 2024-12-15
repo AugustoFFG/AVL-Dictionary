@@ -3,6 +3,7 @@
 #include<string.h>
 #include<locale.h>
 #include<math.h>
+#include<time.h>
 
 typedef struct no{
     char dado[50];
@@ -193,11 +194,10 @@ No* busca(No *raiz, char palavra[], int altura){
 }
 
 void percursoEmOrdem(No* no, int altura){
-    altura+=1;
     if(no == NULL) return;
-    percursoEmOrdem(no->esq, altura);
-    printf("%s: h=%d ",no->dado, altura);
-    percursoEmOrdem(no->dir, altura);
+    percursoEmOrdem(no->esq, ++altura);
+    printf("%s: h=%d\n ",no->dado, altura);
+    percursoEmOrdem(no->dir, ++altura);
 }
 
 int main() {
@@ -206,63 +206,10 @@ int main() {
     char palavra[50], significado[256];
     int opcao;
 
-    /*
-    //main para usuário
-    while(opcao != 6){
-        printf("\n----------------------------\n");
-        printf("Escolha uma opcao\n");
-        printf("[1] Criar arvore vazia\n");
-        printf("[2] Remover uma palavra\n");
-        printf("[3] Inserir uma palavra\n");
-        printf("[4] Buscar palavra\n");
-        printf("[5] Imprimir arvore\n");
-        printf("[6] Sair\n");
-        printf("----------------------------\n");
-        printf("Opcao: ");
-        scanf("%d", &opcao);
-        switch(opcao){
-        case 1:
-            //cria árvore vazia
-            arvore = criaArvore();
-            break;
-        case 2:
-            // remover palavra
-            if(arvore->raiz==NULL) {
-                printf("Arvore vazia!");
-                break;
-            }
-            printf("Insira uma palavra para excluir: ");
-            scanf("%s",palavra);
-            remover(arvore->raiz, palavra);
-            break;
-        case 3:
-            //insere palavra
-            printf("Insira uma palavra: ");
-            scanf("%s",palavra);
-            printf("Insira o significado: ");
-            scanf(" %[^\n]", significado);
-            arvore->raiz = inserir(arvore->raiz, palavra, significado);         
-            break;
-        case 4:
-            //busca
-            printf("Insira uma palavra para buscar: ");
-            scanf("%s",palavra);
-            busca(arvore->raiz, palavra, 0);
-            break;
-        case 5:
-            // imprimir arvore
-            printf("\n");
-            percursoEmOrdem(arvore->raiz, 0);
-            printf("\n");
-            break;
-        case 6:
-            printf("\nEncerrando!");
-            break;
-        default:
-            printf("Opçao invalida, tente novamente");
-        }
-    }
-    */
+    time_t inicioExecPrograma = time(NULL); 
+    time_t fimExecInserir = time(NULL);
+    time_t inicioExecBusca = time(NULL); 
+    time_t fimExecBusca = time(NULL); 
 
     //main limpo para testes
     while(opcao != 6){
@@ -281,6 +228,7 @@ int main() {
             //insere palavra
             scanf("%s",palavra);
             scanf(" %[^\n]", significado);
+            getchar();
             arvore->raiz = inserir(arvore->raiz, palavra, significado);         
             break;
         case 4:
