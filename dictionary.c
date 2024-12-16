@@ -3,7 +3,6 @@
 #include<string.h>
 #include<locale.h>
 #include<math.h>
-#include<time.h>
 
 typedef struct no{
     char dado[50];
@@ -37,6 +36,19 @@ Arvore *criaArvore(){
     return novaArvore;
 }
 
+int calcularAltura(No* no) {
+    if (no == NULL) return 0;
+    int alturaEsq = calcularAltura(no->esq);
+    int alturaDir = calcularAltura(no->dir);
+    return 1 + (alturaEsq > alturaDir ? alturaEsq : alturaDir);
+}
+
+void atualizarFB(No *no) {
+    if (no == NULL) return;
+    int alturaEsq = calcularAltura(no->esq);
+    int alturaDir = calcularAltura(no->dir);
+    no->fatorB = alturaEsq - alturaDir;
+}
 No* LL(No* no){
     No *aux;
     aux = no->dir;
@@ -46,6 +58,8 @@ No* LL(No* no){
     aux->pai = no->pai;
     no->pai = aux;
     no=aux;
+    atualizarFB(no);
+    atualizarFB(aux);
     return no;
 }
 
@@ -59,6 +73,8 @@ No* RR(No* no){
     aux->pai = no->pai;
     no->pai = aux;
     no=aux;
+    atualizarFB(no);
+    atualizarFB(aux);
     return no;
 }
 
@@ -73,33 +89,19 @@ No* LR(No *no){
 }
 
 No* balancear(No* no) {
-    if(no->fatorB>1 && no->esq->fatorB==-1){ //caso LR
+    if(no->fatorB>1 && no->esq->fatorB<=-1){ //caso LR
         no = LR(no);
     } else if(no->fatorB>1) {
         no = RR(no); //caso RR
     }
 
-    if(no->fatorB<-1 && no->dir->fatorB==1){ //caso RL
+    if(no->fatorB<-1 && no->dir->fatorB>=1){ //caso RL
         no = RL(no);
     } else if(no->fatorB<-1) {
         no = LL(no); //caso LL
     }
 
     return no;
-}
-
-int calcularAltura(No* no) {
-    if (no == NULL) return 0;
-    int alturaEsq = calcularAltura(no->esq);
-    int alturaDir = calcularAltura(no->dir);
-    return 1 + (alturaEsq > alturaDir ? alturaEsq : alturaDir);
-}
-
-void atualizarFB(No *no) {
-    if (no == NULL) return;
-    int alturaEsq = calcularAltura(no->esq);
-    int alturaDir = calcularAltura(no->dir);
-    no->fatorB = alturaEsq - alturaDir;
 }
 
 No* inserir(No* raiz, char* palavra, char* significado) {
@@ -169,8 +171,6 @@ No* remover(No* raiz, char* palavra) {
         }
     }
     atualizarFB(raiz);
-
-    // Rebalanceia o nó atual
     return balancear(raiz);
 }
 
@@ -194,10 +194,11 @@ No* busca(No *raiz, char palavra[], int altura){
 }
 
 void percursoEmOrdem(No* no, int altura){
+    altura+=1;
     if(no == NULL) return;
-    percursoEmOrdem(no->esq, ++altura);
-    printf("%s: h=%d\n ",no->dado, altura);
-    percursoEmOrdem(no->dir, ++altura);
+    percursoEmOrdem(no->esq, altura);
+    printf("%s: h=%d ",no->dado, altura);
+    percursoEmOrdem(no->dir, altura);
 }
 
 int main() {
@@ -206,10 +207,63 @@ int main() {
     char palavra[50], significado[256];
     int opcao;
 
-    time_t inicioExecPrograma = time(NULL); 
-    time_t fimExecInserir = time(NULL);
-    time_t inicioExecBusca = time(NULL); 
-    time_t fimExecBusca = time(NULL); 
+    /*
+    //main para usuário
+    while(opcao != 6){
+        printf("\n----------------------------\n");
+        printf("Escolha uma opcao\n");
+        printf("[1] Criar arvore vazia\n");
+        printf("[2] Remover uma palavra\n");
+        printf("[3] Inserir uma palavra\n");
+        printf("[4] Buscar palavra\n");
+        printf("[5] Imprimir arvore\n");
+        printf("[6] Sair\n");
+        printf("----------------------------\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+        switch(opcao){
+        case 1:
+            //cria árvore vazia
+            arvore = criaArvore();
+            break;
+        case 2:
+            // remover palavra
+            if(arvore->raiz==NULL) {
+                printf("Arvore vazia!");
+                break;
+            }
+            printf("Insira uma palavra para excluir: ");
+            scanf("%s",palavra);
+            remover(arvore->raiz, palavra);
+            break;
+        case 3:
+            //insere palavra
+            printf("Insira uma palavra: ");
+            scanf("%s",palavra);
+            printf("Insira o significado: ");
+            scanf(" %[^\n]", significado);
+            arvore->raiz = inserir(arvore->raiz, palavra, significado);         
+            break;
+        case 4:
+            //busca
+            printf("Insira uma palavra para buscar: ");
+            scanf("%s",palavra);
+            busca(arvore->raiz, palavra, 0);
+            break;
+        case 5:
+            // imprimir arvore
+            printf("\n");
+            percursoEmOrdem(arvore->raiz, 0);
+            printf("\n");
+            break;
+        case 6:
+            printf("\nEncerrando!");
+            break;
+        default:
+            printf("Opçao invalida, tente novamente");
+        }
+    }
+    */
 
     //main limpo para testes
     while(opcao != 6){
@@ -222,13 +276,12 @@ int main() {
         case 2:
             // remover palavra
             scanf("%s",palavra);
-            remover(arvore->raiz, palavra);
+            arvore->raiz = remover(arvore->raiz, palavra);
             break;
         case 3:
             //insere palavra
             scanf("%s",palavra);
             scanf(" %[^\n]", significado);
-            getchar();
             arvore->raiz = inserir(arvore->raiz, palavra, significado);         
             break;
         case 4:

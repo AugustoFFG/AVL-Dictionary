@@ -1,0 +1,37 @@
+Árvores criadas sucesso
+
+Inserção de Quieto com sucesso
+
+Inserção de Roedor com sucesso
+
+Inserção de Pata com sucesso
+
+Inserção de Lápis com sucesso
+
+Inserção de Escola com sucesso
+
+Inserção de Gato com sucesso
+
+Escola h=2 Gato h=3 Lápis h=1 Pata h=3 Quieto h=2 Roedor h=3
+
+Inserção de Faca com sucesso
+
+Inserção de Dado com sucesso
+
+Inserção de Bola com sucesso
+
+ Bola h=4 Dado h=3 Escola h=4 Faca h=2 Gato h=3 Lápis h=1 Pata h=3 Quieto h=2 Roedor h=3
+
+Inserção de Abacaxi com sucesso
+
+Abacaxi h=4 Bola h=3 Dado h=2 Escola h=4 Faca h=3 Gato h=4 Lápis h=1 Pata h=3 Quieto h=2 Roedor h=3
+
+Quieto removido com sucesso
+
+Pata removido com sucesso
+
+Abacaxi h=3 Bola h=2 Dado h=1 Escola h=4 Faca h=3 Gato h=4 Lápis h=2 Roedor h=3
+
+Abacaxi removido com sucesso
+
+Bola h=3 Dado h=2 Escola h=3 Faca h=1 Gato h=3 Lápis h=2 Roedor h=3

@@ -1,0 +1,49 @@
+Árvores criadas sucesso
+
+Inserção de Foca com sucesso
+
+Inserção de Escola com sucesso
+
+Inserção de Casa com sucesso
+
+Inserção de Juiz com sucesso
+
+Inserção de Gato com sucesso
+
+Casa h=2 Escola h=1 Foca h=3 Gato h=2  Juiz h=3
+
+Casa removido com sucesso
+
+Escola h=2 Foca h=3 Gato h=1  Juiz h=2
+
+Inserção de Kate com sucesso
+
+Inserção de Pirulito com sucesso
+
+Escola h=2 Foca h=3 Gato h=1 Juiz h=3 Kate h=2 Pirulito h=3
+
+Inserção de Legografia com sucesso
+
+Inserção de Opção com sucesso
+
+Escola h=2 Foca h=3 Gato h=1 Juiz h=3 Kate h=2 Legografia h=4 Opção h=3 Pirulito h=4
+
+Casa removido com Pirulito
+
+Casa removido com Opção
+
+Casa removido com Kate
+
+Casa removido com Juiz
+
+Escola h=2 Foca h=3 Gato h=1 Legografia h=2
+
+Escola h=2 Foca h=1 Gato h=2
+
+Pirulito não encontrado no dicionário
+
+Gato encontrado no dicionário h=2
+Gato: Pequeno mamífero carnívoro, doméstico, da fam. dos felídeos (Felis catus).
+
+Foca encontrado no dicionário h=1
+Foca: Denominação comum a vários mamíferos pinípedes, aquáticos, carnívoros.
