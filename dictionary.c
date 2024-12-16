@@ -37,6 +37,20 @@ Arvore *criaArvore(){
     return novaArvore;
 }
 
+int calcularAltura(No* no) {
+    if (no == NULL) return 0;
+    int alturaEsq = calcularAltura(no->esq);
+    int alturaDir = calcularAltura(no->dir);
+    return 1 + (alturaEsq > alturaDir ? alturaEsq : alturaDir);
+}
+
+void atualizarFB(No *no) {
+    if (no == NULL) return;
+    int alturaEsq = calcularAltura(no->esq);
+    int alturaDir = calcularAltura(no->dir);
+    no->fatorB = alturaEsq - alturaDir;
+}
+
 No* LL(No* no){
     No *aux;
     aux = no->dir;
@@ -46,6 +60,8 @@ No* LL(No* no){
     aux->pai = no->pai;
     no->pai = aux;
     no=aux;
+    atualizarFB(no);
+    atualizarFB(aux);
     return no;
 }
 
@@ -59,6 +75,8 @@ No* RR(No* no){
     aux->pai = no->pai;
     no->pai = aux;
     no=aux;
+    atualizarFB(no);
+    atualizarFB(aux);
     return no;
 }
 
@@ -86,20 +104,6 @@ No* balancear(No* no) {
     }
 
     return no;
-}
-
-int calcularAltura(No* no) {
-    if (no == NULL) return 0;
-    int alturaEsq = calcularAltura(no->esq);
-    int alturaDir = calcularAltura(no->dir);
-    return 1 + (alturaEsq > alturaDir ? alturaEsq : alturaDir);
-}
-
-void atualizarFB(No *no) {
-    if (no == NULL) return;
-    int alturaEsq = calcularAltura(no->esq);
-    int alturaDir = calcularAltura(no->dir);
-    no->fatorB = alturaEsq - alturaDir;
 }
 
 No* inserir(No* raiz, char* palavra, char* significado) {
@@ -222,7 +226,7 @@ int main() {
         case 2:
             // remover palavra
             scanf("%s",palavra);
-            remover(arvore->raiz, palavra);
+            arvore->raiz = remover(arvore->raiz, palavra);
             break;
         case 3:
             //insere palavra
