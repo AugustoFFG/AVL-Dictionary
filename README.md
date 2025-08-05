@@ -8,7 +8,7 @@ Curso de Engenharia de Computação - CEFET/RJ Uned Petrópolis.
 
 Disciplina AEDs II - Professora Laura Assis
 
-[Relatório completo](./Trab1_AEDsII_2022-2.pdf)
+[Relatório completo](./Relatorio_AugustoF_FelipeH_AEDSII_Trab1_2024-2.pdf)
 ## 📖 Resumo
 Este projeto foi desenvolvido como parte fundamental da disciplina de Algoritmos e Estrutura de Dados II, disciplina obrigatória do curso de **Engenharia de Computação** no **Centro Federal de Educação Tecnológica Celso Suckow da Fonseca (CEFET-RJ)**.
 
